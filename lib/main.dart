@@ -1,30 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
 
 void main() {
-  runApp(MyApp());
+  runApp(MaterialApp(home: MyApp()));
 }
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
 
+class Content {
+  String title;
+  String content;
+
+  Content(this.title, this.content);
+}
+
 class _MyAppState extends State<MyApp> {
-  var titles = [
-    '１月２３日の出荷について','値下げについて','日程の変更について',
+  var contents = [
+    Content('１月２３日の出荷について', '''内容:アプリ内での新鮮な漁獲物の供給についての商談。需要はマグロや鮭などの大型魚介類で、月に30トンの供給が必要。長期的な取引を希望し、競争力のある価格を求める。結果:漁師の太郎さんは漁場で豊富なマグロや鮭の供給が可能。具体的な価格や供給量についての条件交渉が続く見込み。'''),
+
+    Content('値下げについて', '''
+内容:
+製品価格の見直しについて協議中。
+市場の競争が激化しており、顧客からのニーズに応えるために価格を見直す必要がある。
+具体的な値下げ幅やタイミングについての提案を行っていく予定。
+'''),
+    Content('日程の変更について', '''
+内容:
+イベントの日程変更に関するお知らせ。
+予定していた日程に重なる他のイベントのため、開催日を変更することとなりました。
+参加者の皆様にはご迷惑をおかけしますが、何卒ご理解いただけますようお願い申し上げます。
+新しい日程については追ってお知らせいたします。
+'''),
   ];
 
+
   void _startRecording() {
+    print("録音を開始しました");
+    var size = MediaQuery.of(context).size;
+    var dotsSize = size.width / 5;
+
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('録音中'),
-          content: Text('録音を開始しました。'),
+          title: Text('録音中',style: TextStyle(color: Colors.redAccent),),
+          content: Container(
+            height: size.height / 7, // Set the height of the dialog content
+            child: Center(
+              child: LoadingAnimationWidget.stretchedDots(
+                color: Colors.redAccent,
+                size: dotsSize,
+              ),
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              child: Text('録音を終了'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         );
       },
     );
-    // ここに録音を開始するコードを書く
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,7 +81,7 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
 
         ),
-        body: VoiceList(titles),
+        body: VoiceList(contents),
         floatingActionButton: Container(
           margin: EdgeInsets.only(bottom: 16.0),
           child: FloatingActionButton.extended(
@@ -53,28 +98,28 @@ class _MyAppState extends State<MyApp> {
 }
 
 class VoiceList extends StatelessWidget {
-  final List<String> titles;
+  final List<Content> contents;
 
-  VoiceList(this.titles);
+  VoiceList(this.contents);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: titles.length,
+      itemCount: contents.length,
       itemBuilder: (context, index) {
         return Card(
           margin: EdgeInsets.all(8.0),
           child: ListTile(
             title: Container(
               padding: EdgeInsets.symmetric(vertical: 30),
-              child: Text(titles[index],
+              child: Text(contents[index].title,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => NewPage()),
+                MaterialPageRoute(builder: (context) => NewPage(content: contents[index].content),),
               );
             },
           ),
@@ -85,7 +130,8 @@ class VoiceList extends StatelessWidget {
 }
 
 class NewPage extends StatelessWidget {
-  var content = '１月２３日の出荷につ';
+  String content;
+  NewPage({this.content = '要約'});
 
   @override
   Widget build(BuildContext context) {
@@ -93,10 +139,13 @@ class NewPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('要約'),
       ),
-      body: Center(
-        child: Text(content,
-          style: Theme.of(context).textTheme.headlineSmall,
-      ),),
+      body: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Center(
+          child: Text(content,
+            style: Theme.of(context).textTheme.headlineSmall,
+        ),),
+      ),
     );
   }
 }
