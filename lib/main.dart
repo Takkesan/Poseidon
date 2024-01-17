@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:voice/voice_list.dart';
 
 
 void main() {
@@ -97,55 +98,5 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class VoiceList extends StatelessWidget {
-  final List<Content> contents;
 
-  VoiceList(this.contents);
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: contents.length,
-      itemBuilder: (context, index) {
-        return Card(
-          margin: EdgeInsets.all(8.0),
-          child: ListTile(
-            title: Container(
-              padding: EdgeInsets.symmetric(vertical: 30),
-              child: Text(contents[index].title,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NewPage(content: contents[index].content),),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-}
-
-class NewPage extends StatelessWidget {
-  String content;
-  NewPage({this.content = '要約'});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('要約'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Center(
-          child: Text(content,
-            style: Theme.of(context).textTheme.headlineSmall,
-        ),),
-      ),
-    );
-  }
-}
